@@ -9,9 +9,15 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "asyncpg>=0.31.0",
+    "deepagents>=0.7.19",
     "fastapi[standard]>=0.141.1",
+    "langchain>=1.4.2",
+    "langchain-openai>=1.6.6",
+    "langgraph>=1.2.12",
     "python-dotenv>=1.2.3",
+    "redis>=8.1.0",
     "sqlalchemy>=2.0.54",
+    "truststore>=0.10.4",
 ]
 
 [tool.uv]

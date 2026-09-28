@@ -1,0 +1,20 @@
+[project]
+name = "manage-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "zhaoyan", email = "yazhao4@cisco.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "asyncpg>=0.31.0",
+    "fastapi[standard]>=0.141.1",
+    "python-dotenv>=1.2.3",
+    "sqlalchemy>=2.0.54",
+]
+
+[tool.uv]
+# 这是一个应用（application），不是要发布的库，不需要被打包安装。
+# 声明 package = false 后，uv 不会再尝试构建本项目，uv add / uv run 才能正常工作。
+package = false

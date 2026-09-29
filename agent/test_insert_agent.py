@@ -28,7 +28,6 @@ SYSTEM_PROMPT = """你是模型配置助手。
 
 def build_agent():
     from deepagents import create_deep_agent
-
     return create_deep_agent(
         model=model,
         tools=[search_siliconflow_models, get_siliconflow_model_config],

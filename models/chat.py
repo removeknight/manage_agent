@@ -13,7 +13,7 @@ class Chat(Base):
     session_id: Mapped[str] = mapped_column(String(36))
     sequence: Mapped[int] = mapped_column(Integer, nullable=False)
     llm_id: Mapped[str] = mapped_column(String(36))
-    llm_name: Mapped[Optional[str]] = mapped_column(String(100))
+    llm_name: Mapped[Optional[str]] = mapped_column(String(128))
     tool_calls: Mapped[Optional[dict[str, Any]]] = mapped_column(JSONB)
     role: Mapped[str] = mapped_column(String(10))
     content: Mapped[str] = mapped_column(Text, nullable=False)

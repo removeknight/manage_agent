@@ -10,12 +10,12 @@ class TokenUsage(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     user_id: Mapped[str] = mapped_column(String(36))
     llm_id: Mapped[str] = mapped_column(String(36))
-    llm_name: Mapped[Optional[str]] = mapped_column(String(100))
+    llm_name: Mapped[Optional[str]] = mapped_column(String(128))
     session_id: Mapped[str] = mapped_column(String(36))
     chat_id: Mapped[str] = mapped_column(String(36))
     token_cost: Mapped[float] = mapped_column(Float)
     price_cose: Mapped[float] = mapped_column(Float)
-    description: Mapped[Optional[str]] = mapped_column(String(255))
+    description: Mapped[Optional[str]] = mapped_column(String(256))
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True),
                                                           server_default=func.now(),
                                                           nullable=False)

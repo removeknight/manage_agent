@@ -8,7 +8,7 @@
 import datetime
 from typing import Literal, Optional
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -78,7 +78,11 @@ async def create_model(
 
 @router.get("/{model_id}", response_model=ModelResponse)
 async def get_model(model_id: str, db: AsyncSession = Depends(get_db)):
-    pass
+    """按 id 获取模型配置，不存在则 404。"""
+    instance = await model_service.get_model(db, model_id)
+    if instance is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="模型配置不存在")
+    return instance
 
 
 @router.put("/{model_id}", response_model=ModelResponse)

@@ -6,13 +6,14 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column
 
+from db.query import build_sql_stmt
 from models.base import Base
 
 
 class ModelConfig(Base):
     __tablename__ = "model_config"
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
-    name: Mapped[str] = mapped_column(String(36))
+    name: Mapped[str] = mapped_column(String(128))
     provider: Mapped[str] = mapped_column(String(50))
     api_base: Mapped[str] = mapped_column(String(255))
     temperature: Mapped[float] = mapped_column(Float)
@@ -22,7 +23,7 @@ class ModelConfig(Base):
     output_price_per_k: Mapped[float] = mapped_column(Float)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     extra_params: Mapped[Optional[dict[str, Any]]] = mapped_column(JSONB, nullable=True)
-    description: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    description: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True),
                                                           server_default=func.now(),
                                                           nullable=False)
@@ -49,3 +50,37 @@ async def insert(db: AsyncSession, data: dict[str, Any]) -> ModelConfig:
     await db.flush()       # 执行 INSERT，但不提交事务
     await db.refresh(instance)  # 读回 server_default 生成的字段
     return instance
+
+
+async def get_one(
+    db: AsyncSession,
+    filters: Optional[dict[str, Any]] = None,
+) -> Optional[ModelConfig]:
+    """model 层：按过滤条件取一条 model_config，取不到返回 None。
+
+    复用通用查询构造器 db.query.build_sql_stmt，filters 写法见其文档
+    （普通值即等值查询，也支持 {"operator": ..., "value": ...} 等）。
+    """
+    stmt = build_sql_stmt(ModelConfig, filters=filters)
+    result = await db.execute(stmt)
+    return result.scalar_one_or_none()
+
+
+async def get_many(
+    db: AsyncSession,
+    filters: Optional[dict[str, Any]] = None,
+    *,
+    order_by: Optional[list[dict[str, str]]] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+) -> list[ModelConfig]:
+    """model 层：按过滤条件批量取 model_config（支持排序、分页）。"""
+    stmt = build_sql_stmt(
+        ModelConfig,
+        filters=filters,
+        order_by=order_by,
+        limit=limit,
+        offset=offset,
+    )
+    result = await db.execute(stmt)
+    return list(result.scalars().all())
